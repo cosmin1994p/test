@@ -3,8 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!--    <script src="jquery-3.6.4.min.js"></script>-->
+    <link rel="stylesheet" href="style.css">
+    <link rel="script" href="app.js">
 </head>
 <body>
-Test
+<h2>Get call - receive a student from Java</h2>
+<button onclick="load()">Click here</button>
+
+<h2>Drop down list</h2>
+<div class="form-checkbox">
+    <label>Student name</label><br>
+    <input type="text" name="age" id="name"><br>
+    <label>Student age</label><br>
+    <input type="text" name="age" id="age"><br>
+    <label>University</label><br><br>
+    <p id="dropDownToReplace1"></p>
+    <button onclick="setStudent()">Add student</button>
+</div>
+<br>
+<h2> Radio buttons </h2>
+<div>
+    <label>Student name</label><br>
+    <input type="text" name="age" id="name2"><br>
+    <label>Student age</label><br>
+    <input type="text" name="age" id="age2"><br>
+    <label>University</label><br><br>
+    <select id="dropDownToReplace">
+    </select><br>
+
+    <input type="radio" value=true name="graduated"/>
+    <label>Graduated</label><br>
+    <input type="radio" value=false name="graduated"/>
+    <label>Not graduated</label><br>
+    <button onclick="sendStudUniv()">Add student and univ details</button>
+</div>
+
+<div>
+    <h2>Show all students in a table by calling the server</h2>
+    <p id="table"></p>
+    <button onclick="seeAllStudentsHtml()">Click here</button>
+</div>
+
+<script>
+
+    function getStudent(){
+        $.get("/getStudent", function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });
+    }
+
+    function populateDropDown(universities){
+        console.log("we are inside the function populateDropDown()")
+
+        let html = "<select id='dropDownUniv'> ";
+
+        for(const univ in universities){
+            html+="<option>"+universities[univ].name+"</option>";
+        } // Fahad Faraj
+        html+="</select>";
+        document.getElementById("dropDownToReplace").innerHTML = html;
+        document.getElementById("dropDownToReplace1").innerHTML = html;
+    }
+
+    function getUniversities(){
+        $.get("/getUniversityList", function(data, status){
+            console.log("it does stuff", data);
+            populateDropDown(data);
+        });
+    }
+
+    function sendStudUniv(){
+            student = {
+                name: $("#name2").val(),
+                age: $("#age2").val(),
+                university:{
+                   name: $('#dropDownUniv').find(":selected").text(),
+                },
+                graduated: $('input[name=graduated]:checked').val()
+            }
+        $.ajax({
+            type: 'post',
+            url: '/setStudentDB',
+            async: false,              // EXPLANATION!!!
+            data: JSON.stringify(student),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(result, status, xhr) {
+                console.log(result);
+            }
+        });
+    }
+
+    function testPost(){
+        student = {
+            name:"John",
+            age: 22,
+            university:{
+                name:"MIT",
+                country: "USA"
+            }
+        }
+
+        $.ajax({
+            type: 'post',
+            url: '/setStudent',
+            async: false,
+            data: JSON.stringify(student),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(result, status, xhr) {
+                console.log(result);
+            }
+        });
+    }
+
+  getUniversities();
+
+    function seeAllStudentsHtml(){
+        $.get("/getAllStudents", function(data, status){
+            let html = "<table><thead><td>Name</td><td>Age</td><td>University</td><td>Graduated</td></thead>";
+
+            for(const stud of data){
+                html+="<tr><td>"+stud.name+"</td>" +
+                    "<td>"+stud.age+"</td>" +
+                    "<td>"+stud.university.name+"</td>" +
+                    "<td>"+stud.graduated+"</td>" +
+                    "</tr>";
+            }
+            html+="</table>";
+            document.getElementById("table").innerHTML = html;
+        });
+    }
+
+</script>
+
+
+
+<script>
+    var students = [
+        { first_nom: 'Lazslo', last_nom: 'Jamf'     },
+        { first_nom: 'Pig',    last_nom: 'Bodine'   },
+        { first_nom: 'Pirate', last_nom: 'Prentice' }
+    ];
+
+
+</script>
 </body>
 </html>
