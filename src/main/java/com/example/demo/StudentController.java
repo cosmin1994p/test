@@ -64,6 +64,11 @@ public class StudentController {
         studentRepository.save(student);
         return "updated";
     }
+    @DeleteMapping("/deleteById")
+    public String deleteById(@RequestParam Long id){
+        studentRepository.deleteById(id);
+        return "The student with the id: " + id + "has been deleted";
+    }
 };
 
 

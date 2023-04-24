@@ -46,6 +46,12 @@
     <button onclick="seeAllStudentsHtml()">Click here</button>
 </div>
 
+<!--We have an HTML table with data from DB  -seeAllStudentsHtml() - -->
+<!--Modify the above method to add an id column as well-->
+<!--add an extra column with a JS button that onclick => /updateStudentDB () -->
+
+
+
 <script>
 
     function getStudent(){
@@ -123,13 +129,15 @@
 
     function seeAllStudentsHtml(){
         $.get("/getAllStudents", function(data, status){
-            let html = "<table><thead><td>Name</td><td>Age</td><td>University</td><td>Graduated</td></thead>";
+            let html = "<table><thead><td>Name</td><td>Age</td><td>University</td><td>Graduated</td><td>Id</td><td>update</td></thead>";
 
             for(const stud of data){
                 html+="<tr><td>"+stud.name+"</td>" +
                     "<td>"+stud.age+"</td>" +
                     "<td>"+stud.university.name+"</td>" +
                     "<td>"+stud.graduated+"</td>" +
+                    "<td>"+stud.id+"</td>" +
+                    "<td onclick='activateCustomUpdate()'>"+stud.id+"</td>"
                     "</tr>";
             }
             html+="</table>";
