@@ -44,6 +44,8 @@
     <h2>Show all students in a table by calling the server</h2>
     <p id="table"></p>
     <button onclick="seeAllStudentsHtml()">Click here</button>
+    <br>
+    <label>Put here name to be changed</label><input type="text" id="nameToBeModified">
 </div>
 
 <!--We have an HTML table with data from DB  -seeAllStudentsHtml() - -->
@@ -104,6 +106,7 @@
 
     function testPost(){
         student = {
+            id: 1,
             name:"John",
             age: 22,
             university:{
@@ -121,28 +124,40 @@
             dataType: "json",
             success: function(result, status, xhr) {
                 console.log(result);
-            }
+            },
         });
     }
 
   getUniversities();
 
     function seeAllStudentsHtml(){
-        $.get("/getAllStudents", function(data, status){
+        $.get("/getStudentsFromDB", function(data, status){
             let html = "<table><thead><td>Name</td><td>Age</td><td>University</td><td>Graduated</td><td>Id</td><td>update</td></thead>";
-
+            console.log(data);
             for(const stud of data){
+                let student1 = stud;
                 html+="<tr><td>"+stud.name+"</td>" +
                     "<td>"+stud.age+"</td>" +
-                    "<td>"+stud.university.name+"</td>" +
+                    "<td>"+stud+"</td>" +
                     "<td>"+stud.graduated+"</td>" +
-                    "<td>"+stud.id+"</td>" +
-                    "<td onclick='activateCustomUpdate()'>"+stud.id+"</td>"
+                    "<td id ='id'>"+stud.id+"</td>" +
+                    "<td onclick=activateCustomUpdate(" +stud.id+")><button>Click here to update stud "+stud.id+"</button></td>"
                     "</tr>";
             }
             html+="</table>";
             document.getElementById("table").innerHTML = html;
         });
+    }
+
+    function activateCustomUpdate(value){
+        let name = $("#nameToBeModified").val();
+        // let age = ... input
+        // let graduated = ...radio
+        alert(value + " " +name);
+        $.post('/updateStudentDBPost', { id: value, name : name},
+            function(returnedData){
+                console.log(returnedData);
+            });
     }
 
 </script>

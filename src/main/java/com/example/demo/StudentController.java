@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 public class StudentController {
 
+    Logger logger = LoggerFactory.getLogger(StudentController.class);
     @Autowired
     StudentRepository studentRepository;
 
@@ -32,16 +33,16 @@ public class StudentController {
             studentRepository.save(student3);
             return "Success - Student added";
         }catch (Exception e){
-            System.out.println();
-            return "No success there has been an error - Student added";
+            logger.error(e.getMessage());
+            return e.getStackTrace().toString();
         }
     }
 
-    @GetMapping("/getStudentsFromDB")
-    public String getStudentsFromDB(){
+        @GetMapping("/getStudentsFromDB")
+    public List<Student> getStudentsFromDB(){
         List<Student> studentList = studentRepository.findAllByOrderByNameAsc();  // SELECT * from students
         studentList.forEach(x-> System.out.println(x));
-        return "Students retrived - check Java console";
+        return studentList;
     }
 
     @DeleteMapping("/deleteStudentsFromDB")
@@ -52,7 +53,7 @@ public class StudentController {
 
     @PostMapping("/setStudentDB")
     public String setStudentDB(@RequestBody Student student){
-        System.out.println(student);
+        logger.info(String.valueOf(student));
         studentRepository.save(student);
         return "Object was received... we are goind to process it (somehow)";
     }
@@ -64,6 +65,15 @@ public class StudentController {
         studentRepository.save(student);
         return "updated";
     }
+    @PostMapping("/updateStudentDBPost")
+    public String updateStudentDBPost(@RequestParam Long id,  @RequestParam String name){
+        Student student = studentRepository.getById(id);
+        student.setName(name);
+        studentRepository.save(student);
+        return "updated";
+    }
+
+
     @DeleteMapping("/deleteById")
     public String deleteById(@RequestParam Long id){
         studentRepository.deleteById(id);
