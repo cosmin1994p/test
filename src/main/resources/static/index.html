@@ -9,21 +9,21 @@
     <link rel="script" href="app.js">
 </head>
 <body>
-<h2>Get call - receive a student from Java</h2>
-<button onclick="load()">Click here</button>
+<!--<h2>Get call - receive a student from Java</h2>-->
+<!--<button onclick="load()">Click here</button>-->
 
-<h2>Drop down list</h2>
-<div class="form-checkbox">
-    <label>Student name</label><br>
-    <input type="text" name="age" id="name"><br>
-    <label>Student age</label><br>
-    <input type="text" name="age" id="age"><br>
-    <label>University</label><br><br>
-    <p id="dropDownToReplace1"></p>
-    <button onclick="setStudent()">Add student</button>
-</div>
+<!--<h2>Drop down list</h2>-->
+<!--<div class="form-checkbox">-->
+<!--    <label>Student name</label><br>-->
+<!--    <input type="text" name="age" id="name"><br>-->
+<!--    <label>Student age</label><br>-->
+<!--    <input type="text" name="age" id="age"><br>-->
+<!--    <label>University</label><br><br>-->
+<!--    <p id="dropDownToReplace1"></p>-->
+<!--    <button onclick="setStudent()">Add student</button>-->
+<!--</div>-->
 <br>
-<h2> Radio buttons </h2>
+<h2> Form for students </h2>
 <div>
     <label>Student name</label><br>
     <input type="text" name="age" id="name2"><br>
@@ -45,7 +45,10 @@
     <p id="table"></p>
     <button onclick="seeAllStudentsHtml()">Click here</button>
     <br>
-    <label>Put here name to be changed</label><input type="text" id="nameToBeModified">
+    <h3>Update section</h3>
+    <label>Name</label><br><input type="text" id="nameToBeModified"><br>
+    <label>Age</label><br><input type="text" id="ageToBeModified"><br>
+    <label>University</label><br><input type="text" id="universityToBeModified">
 </div>
 
 <!--We have an HTML table with data from DB  -seeAllStudentsHtml() - -->
@@ -86,11 +89,10 @@
             student = {
                 name: $("#name2").val(),
                 age: $("#age2").val(),
-                university:{
-                   name: $('#dropDownUniv').find(":selected").text(),
-                },
+                univ: $('#dropDownUniv').find(":selected").val(),
                 graduated: $('input[name=graduated]:checked').val()
             }
+            console.log(student);
         $.ajax({
             type: 'post',
             url: '/setStudentDB',
@@ -135,10 +137,9 @@
             let html = "<table><thead><td>Name</td><td>Age</td><td>University</td><td>Graduated</td><td>Id</td><td>update</td></thead>";
             console.log(data);
             for(const stud of data){
-                let student1 = stud;
                 html+="<tr><td>"+stud.name+"</td>" +
                     "<td>"+stud.age+"</td>" +
-                    "<td>"+stud+"</td>" +
+                    "<td>"+stud.univ+"</td>" +
                     "<td>"+stud.graduated+"</td>" +
                     "<td id ='id'>"+stud.id+"</td>" +
                     "<td onclick=activateCustomUpdate(" +stud.id+")><button>Click here to update stud "+stud.id+"</button></td>"
@@ -151,14 +152,21 @@
 
     function activateCustomUpdate(value){
         let name = $("#nameToBeModified").val();
-        // let age = ... input
-        // let graduated = ...radio
+        let age = $("#ageToBeModified").val();
+        let university = $("#universityToBeModified").val();
         alert(value + " " +name);
-        $.post('/updateStudentDBPost', { id: value, name : name},
+        $.post('/updateStudentDBPost', { id: value, name : name, age: age, univ: university},
             function(returnedData){
                 console.log(returnedData);
             });
     }
+
+    // create a new html page - for the form
+    // grabTheId (id)
+         // /getStudentById(id)
+         //  redirect to the new HTML + student
+         // show the new page: input=name => student.name
+
 
 </script>
 

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StudentRepository extends JpaRepository<Student,Long> {
+public interface StudentRepository extends JpaRepository<Student,Integer> {
 
     // get all student < 21 and name like "%o%"   => SELECT * FROM STUDENTS WHERE AGE > 21 AND NAME LIKE "%o%"
     public List<Student> findStudentByAgeBeforeAndNameLike(Integer age,String name);

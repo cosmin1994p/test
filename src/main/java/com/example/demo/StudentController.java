@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,24 @@ public class StudentController {
     @Autowired
     StudentRepository studentRepository;
 
+    @Autowired
+    private HttpSession session;
+
     @GetMapping("/hello")
     public String hello(){
-        return "Hello stranger, welcome to this API";
+        // one more example of how we can access the "session" object and see (or edit if we want) information that exists inside
+        String obj = "this student has visited the /hello endpoint";
+        session.setAttribute("hello",obj);
+        return "Hello stranger, welcome to this API" +
+                "   .The following user logged in earlier: "
+                + session.getAttribute("Logged in").toString();
     }
-
+    @GetMapping("/goodbye")
+    public String goodbye(){
+        // if there is no need for a session, than we can go ahead and just remove it. once we do that, we can no longer access the info inside
+        session.invalidate();
+        return "Session invalidated";
+    }
 
     @GetMapping("/addStudentToDB")
     public String addStudentToDB() throws IOError {
@@ -38,8 +52,8 @@ public class StudentController {
         }
     }
 
-        @GetMapping("/getStudentsFromDB")
-    public List<Student> getStudentsFromDB(){
+    @GetMapping("/getStudentsFromDB")
+        public List<Student> getStudentsFromDB(){
         List<Student> studentList = studentRepository.findAllByOrderByNameAsc();  // SELECT * from students
         studentList.forEach(x-> System.out.println(x));
         return studentList;
@@ -54,28 +68,38 @@ public class StudentController {
     @PostMapping("/setStudentDB")
     public String setStudentDB(@RequestBody Student student){
         logger.info(String.valueOf(student));
-        studentRepository.save(student);
+            studentRepository.save(student);
         return "Object was received... we are goind to process it (somehow)";
     }
 
     @PutMapping("/updateStudentDB")
-    public String updateStudentDB(@RequestParam Long id,  @RequestParam String name){
+    public String updateStudentDB(@RequestParam Integer id,  @RequestParam String name){
         Student student = studentRepository.getById(id);
         student.setName(name);
         studentRepository.save(student);
         return "updated";
     }
     @PostMapping("/updateStudentDBPost")
-    public String updateStudentDBPost(@RequestParam Long id,  @RequestParam String name){
+    public String updateStudentDBPost(@RequestParam Integer id,  @RequestParam String name,
+                                      @RequestParam Integer age, @RequestParam String univ){
+
         Student student = studentRepository.getById(id);
-        student.setName(name);
+        if(name!=null){
+            student.setName(name);
+        }
+        if(age!=null){
+            student.setAge(age);
+        }
+        if(univ!=null){
+            student.setUniv(univ);
+        }
         studentRepository.save(student);
         return "updated";
     }
 
 
     @DeleteMapping("/deleteById")
-    public String deleteById(@RequestParam Long id){
+    public String deleteById(@RequestParam Integer id){
         studentRepository.deleteById(id);
         return "The student with the id: " + id + "has been deleted";
     }
