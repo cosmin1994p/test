@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOError;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class StudentController {
 
     Logger logger = LoggerFactory.getLogger(StudentController.class);
@@ -102,6 +104,16 @@ public class StudentController {
     public String deleteById(@RequestParam Integer id){
         studentRepository.deleteById(id);
         return "The student with the id: " + id + "has been deleted";
+    }
+
+    @GetMapping("/getStudentHardCoded")
+    public Collection<Student> getStudentHardCoded() throws IOError {
+        Collection<Student> studs = new ArrayList<>();
+        Student student = new Student(1,"John",23,true,"OsloMet");
+        Student student2 = new Student(2,"Ole",24,false,"Harvard");
+        studs.add(student);
+        studs.add(student2);
+        return studs;
     }
 };
 
