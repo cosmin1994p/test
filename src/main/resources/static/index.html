@@ -55,9 +55,43 @@
 <!--Modify the above method to add an id column as well-->
 <!--add an extra column with a JS button that onclick => /updateStudentDB () -->
 
-
+<div>
+    <p>Second page of the demo project</p>
+    <a href="https://localhost:8081/secondForm.html"> press here</a>
+    <h3> Teachers and Univ list </h3>
+    <label>Teacher name</label><br>
+    <input type="text" name="teacherName" id="teacherName"><br>
+    <label>Teacher field of activity</label><br>
+    <input type="text" name="speciality" id="speciality"><br>
+    <label>University name</label><br>
+    <input type="text" name ="univName" id="univName"/><br>
+    <label>University country</label><br>
+    <input type="text" name ="univCountry" id="univCountry"/><br>
+    <button onclick="sendDTO()">Add student and univ details</button>
+</div>
 
 <script>
+
+    function sendDTO(){
+        teacherDTO = {
+            teacherName: $("#teacherName").val(),
+            speciality: $("#speciality").val(),
+            univName: $('#univName').val(),
+            univCountry: $('#univCountry').val(),
+        }
+        console.log(teacherDTO);
+        $.ajax({
+            type: 'post',
+            url: '/saveTeacherDTO',
+            async: false,
+            data: JSON.stringify(teacherDTO),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(result, status, xhr) {
+                console.log(result);
+            }
+        });
+    }
 
     function getStudent(){
         $.get("/getStudent", function(data, status){
